@@ -1,0 +1,30 @@
+.answer-container {
+    margin: 50px auto;
+    width: 400px; /* Två kolumner, 200px vardera + 20px mellanrum */
+    display: grid; /* Aktivera CSS Grid */
+    grid-template-columns: 1fr 1fr; /* Två lika breda kolumner */
+    grid-gap: 20px; /* Mellanrum mellan rader och kolumner */
+  }
+  
+  .answer-button {
+    background-color: #fcdada;
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    color: #000000; /* Text färg */
+    text-align: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .answer-button:hover {
+    background-color: #ffbebe;
+    transform: scale(1.03);
+  }
+  
+  .answer-button:active {
+    background-color: #ff9b9b;
+    transform: scale(0.95);
+  }
+  
