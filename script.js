@@ -1,76 +1,62 @@
 let currentQuestionIndex = 0;
+let questions = [];
+let correctAnswerCount = 0;
 
-const questions = [
-    {
-      question: "What is the capital of France?",
-      answers: ["Berlin", "Madrid", "Paris", "Rome"],
-      correct: 2,
-    },
-    {
-      question: "Which planet is known as the Red Planet?",
-      answers: ["Earth", "Mars", "Jupiter", "Saturn"],
-      correct: 1,
-    },
-    {
-      question: "Who wrote 'Romeo and Juliet'?",
-      answers: [
-        "Charles Dickens",
-        "Jane Austen",
-        "William Shakespeare",
-        "Mark Twain",
-      ],
-      correct: 2,
-    },
-    {
-      question: "What is the largest mammal in the world?",
-      answers: ["Elephant", "Blue Whale", "Giraffe", "Great White Shark"],
-      correct: 1,
-    },
-];
-
-
-function populateQuestion(questionObj) {
-    const questionText = document.getElementById("question-text");
-    questionText.textContent = questionObj.question;
-  
-    const answerButtons = document.querySelectorAll(".answer-button");
-    for (let i = 0; i < questionObj.answers.length; i++) {
-      answerButtons[i].textContent = questionObj.answers[i];
+async function fetchQuestions() {
+  try {
+    const apiResponse = await fetch("https://www.tassell.se/apis/quiz.php?key=5cf19af194310e4f16c1a3b41ae690b3");
+    if (!apiResponse.ok) {
+      throw new Error("Couldn't fetch the questions");
     }
+
+    const questionData = await apiResponse.json();
+    questions = questionData.questions;
+
+    if (questions.length > 0) { 
+      showQuestion(questions[currentQuestionIndex]);
+    } else {
+      alert("No questions available from the API.");
+    }
+  } catch (fetchError) {
+    alert("Failed to load questions. Please try again.", fetchError);
   }
-  
-  function updateProgress() {
-    const progressText = document.getElementById("progress-text");
-    progressText.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
-  }
-  
+}
+
+function showQuestion(questionObj) {
+  const questionText = document.getElementById("question-text");
+  questionText.textContent = questionObj.question;
+
   const answerButtons = document.querySelectorAll(".answer-button");
-  
-  for (let i = 0; i < answerButtons.length; i++) {
-    answerButtons[i].addEventListener("click", function () {
-      if (i === questions[currentQuestionIndex].correct) {
-        console.log("Correct!");
-        currentQuestionIndex++;
-  
-        if (currentQuestionIndex < questions.length) {
-          populateQuestion(questions[currentQuestionIndex]);
-          updateProgress();
-        } else {
-          console.log("Quiz completed!");
-          alert("You have completed the quiz!");
-        }
-      } else {
-        console.log("Wrong!");
-      }
-    });
+  for (let i = 0; i < questionObj.answers.length; i++) {
+    answerButtons[i].textContent = questionObj.answers[i];
   }
-  
-  // Starta quizet
-  populateQuestion(questions[currentQuestionIndex]);
-  updateProgress();
+}
+
+const answerButtons = document.querySelectorAll(".answer-button");
 
 for (let i = 0; i < answerButtons.length; i++) {
-    answerButtons[i].addEventListener('click', () => {
+  answerButtons[i].addEventListener("click", function() {
+    if (i === questions[currentQuestionIndex].correct) {
+      console.log("Correct");
+      correctAnswerCount++;
+    } else {
+      console.log("Wrong");
+    }
+
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < questions.length) {
+      showQuestion(questions[currentQuestionIndex]);
+    } else {
+      alert(`You've completed the quiz.\nYou got ${correctAnswerCount}/${questions.length} questions correct.`);
+    }
+  });
+}
+
+fetchQuestions();
+
+for (let i = 0; i < answerButtons.length; i++) {
+    answerButtons[i].addEventListener('click', function() {
         console.log(`Button ${i} was pressed`);
     });
 }
